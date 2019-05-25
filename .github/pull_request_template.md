@@ -22,7 +22,3 @@ Include the pivotal tracker story ID and the link to the story
 **Screenshots (if appropriate)**
 
 You can have screenshots where applicable
-
-**Questions:**
-
-If something is unclear or you want some questions to be addressed by your peers, mention them here
