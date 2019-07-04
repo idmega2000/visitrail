@@ -126,3 +126,17 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'JWT_SECRET_KEY': os.getenv('JWT_SECRET_KEY', ''),
+    'JWT_VERIFY_EXPIRATION': False,
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+}
+
+REST_FRAMEWORK = {'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
+
