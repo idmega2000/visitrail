@@ -3,7 +3,7 @@ from api.models import Company, CompanyCenter, User
 # from api.tests.factories.user import UserFactory
 
 
-class UserFactory(factory.DjangoModelFactory):
+class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = User
         django_get_or_create = ('email',)
@@ -13,7 +13,7 @@ class UserFactory(factory.DjangoModelFactory):
     email = 'testemail@test.com'
     password = 'anypassword'
 
-class CompanyFactory(factory.DjangoModelFactory):
+class CompanyFactory(factory.django.DjangoModelFactory):
     # from api.tests.factories.user import UserFactory
 
     class Meta:
@@ -28,7 +28,7 @@ class CompanyFactory(factory.DjangoModelFactory):
 
     
 
-class CompnayCenterFactory(factory.DjangoModelFactory):
+class CompnayCenterFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = CompanyCenter

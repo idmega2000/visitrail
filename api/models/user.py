@@ -1,15 +1,14 @@
 from django.db import models
-# users/models.py
-
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 
+from django.core.validators import MinLengthValidator
 
+# models
 from .base import BaseModel
 from .company import Company
 
 # Create your models here.
-
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -41,7 +40,7 @@ class UserManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
-class User(AbstractBaseUser, PermissionsMixin):
+class User(BaseModel,AbstractBaseUser, PermissionsMixin):
     """ Model that hold the user data """
 
     ROLES = (
@@ -53,10 +52,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=40)
     last_name = models.CharField(max_length=40)
     email = models.EmailField(max_length=100, unique=True) 
-    phone = models.IntegerField(blank=True, null=True)
+    phone = models.CharField(max_length=14, validators=[MinLengthValidator(6)], blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    image_url = models.TextField(null=True, blank=True)
     role = models.CharField(max_length=30, choices=ROLES, default='User')
 
 
@@ -86,8 +86,3 @@ class User(AbstractBaseUser, PermissionsMixin):
         Sends an email to this User.
         '''
         send_mail(subject, message, from_email, [self.email], **kwargs)
-
-class UserProfile(BaseModel):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    image_url = models.TextField(null=True, blank=True)
-    company = models.ForeignKey('api.Company', on_delete=models.CASCADE)
