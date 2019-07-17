@@ -32,7 +32,7 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
     def create_superuser(self, email, password, **extra_fields):
-        admin_fields = {'is_superuser': True, 'is_staff': True}
+        admin_fields = {'is_superuser': True, 'is_staff': True, 'is_verified': True}
         extra_fields.update(admin_fields)
 
         if extra_fields.get('is_superuser') is not True:
@@ -57,6 +57,7 @@ class User(BaseModel,AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     image_url = models.TextField(null=True, blank=True)
+    is_verified = models.BooleanField(default=False)
     role = models.CharField(max_length=30, choices=ROLES, default='User')
 
 

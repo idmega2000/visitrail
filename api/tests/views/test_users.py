@@ -24,7 +24,7 @@ class TestUserAuth(APITestCase):
         self.assertEqual(response.data['status'], 'error')
 
     def test_signup_single_user_successfully(self):
-        """Test getting information of a user who is in the database."""
+        """Test user signup successfully"""
         user = {
             "email": "testemail1@test.com",
             "last_name": "testlast",
@@ -36,6 +36,7 @@ class TestUserAuth(APITestCase):
         self.assertEqual(response.data['status'], 'success')
     
     def test_user_login_with_bad_credentials_fails(self):
+        """Test user login with bad credentials"""
         user = {
             "email": "testemail@test.com",
             "password": "anyssword"
@@ -44,6 +45,7 @@ class TestUserAuth(APITestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_user_login_successful(self):
+        """Test user login successfull"""
         user = {
             "email": "testemail@test.com",
             "password": "anypassword"
@@ -61,6 +63,7 @@ class TestUser(APITestCase):
         self.new_token = LoginToken().first_token()
 
     def test_user_list_without_token(self):
+        """Test get all user without authentication"""
         response = self.client.get('/api/v1/user')
 
         self.assertEqual(response.status_code, 401)
@@ -78,6 +81,7 @@ class TestUser(APITestCase):
         self.assertEqual(response.data['data'][0]['first_name'], 'testname')
 
     def test_get_user_data_without_token(self):
+        """Test get a user without authentication"""
         user_id = self.new_user.id
         url = f'/api/v1/user/{user_id}'
         response = self.client.get(url)
@@ -99,6 +103,7 @@ class TestUser(APITestCase):
         self.assertEqual(response.data['data']['first_name'], 'testname')
     
     def test_edit_user_data_without_token(self):
+        """Test edit user without authentication"""
         user_id = self.new_user.id
         url = f'/api/v1/user/{user_id}'
 
@@ -113,6 +118,7 @@ class TestUser(APITestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_edit_a_user_data_fails(self):
+        """Test edit user that is not you"""
         headers = {
             'HTTP_AUTHORIZATION': 'Bearer ' + self.new_token
         }
@@ -132,6 +138,7 @@ class TestUser(APITestCase):
 
 
     def test_edit_a_user_data_succeeds(self):
+        """Test edit a user"""
         headers = {
             'HTTP_AUTHORIZATION': 'Bearer ' + self.new_token
         }

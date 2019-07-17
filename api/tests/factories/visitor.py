@@ -3,6 +3,7 @@ from api.models import Visitor
 from ..factories.user import UserFactory
 
 class VisitorFactory(factory.DjangoModelFactory):
+    """Creates an instance of the Visitor"""
 
     class Meta:
         model = Visitor
