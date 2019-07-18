@@ -10,6 +10,7 @@ class TestVisitorModel(TestCase):
         self.new_visitor = VisitorFactory.create(host=self.user)
 
     def test_visitor_model(self):
+        """test instance of visitor model is saved in db"""
         new_visitor = self.new_visitor
         assert new_visitor.host == self.user
         assert new_visitor.first_name == 'test'

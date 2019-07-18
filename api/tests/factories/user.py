@@ -4,6 +4,7 @@ from api.tests.factories.company import CompanyFactory
 
 
 class UserFactory(factory.django.DjangoModelFactory):
+    """Creates an instance of the User model"""
     class Meta:
         model = User
         django_get_or_create = ('email',)
@@ -15,6 +16,7 @@ class UserFactory(factory.django.DjangoModelFactory):
 
 
 class AdminUserFactory(factory.django.DjangoModelFactory):
+    """Creates an instance of the Admin User Model"""
     class Meta:
         model = User
         django_get_or_create = ('email',)
