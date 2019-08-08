@@ -1,5 +1,5 @@
 import factory
-from api.models import User
+from api.models import User, CompanyUser
 from api.tests.factories.company import CompanyFactory
 
 
@@ -28,3 +28,17 @@ class AdminUserFactory(factory.django.DjangoModelFactory):
     is_staff = True
     is_superuser = True
     
+class CompanyUserFactory(factory.django.DjangoModelFactory):
+    """
+        Creates an instance of the Company user model
+    """
+    class Meta:
+        model = CompanyUser
+        
+    first_name = 'testname'
+    last_name = 'testlast'
+    email = 'testemail@test.com'
+    password = factory.PostGenerationMethodCall('set_password', 'anypassword')
+    added_by = factory.SubFactory(UserFactory)
+    company = factory.SubFactory(CompanyFactory)
+

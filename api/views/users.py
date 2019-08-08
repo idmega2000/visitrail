@@ -1,10 +1,11 @@
-from django.db import models
-from api.models.user import User
-from api.serializers import UserSerializer, UpdateUserSerializer
+
+from api.models.user import User, CompanyUser, Company
+from api.serializers import UserSerializer, UpdateUserSerializer, CompanyUserSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
+from django.shortcuts import get_list_or_404, get_object_or_404
 
 class UserViewSet(viewsets.ModelViewSet):
     """Viewset to handle User details"""
@@ -94,3 +95,66 @@ class SignUpView(viewsets.ModelViewSet):
             'message': serializer.errors
         }
         return Response(error, status=status.HTTP_400_BAD_REQUEST)
+
+class CompanyUserView(viewsets.ModelViewSet):
+    """Viewset to handle company users"""
+    permission_classes = (IsAuthenticated,)
+    queryset = CompanyUser.objects.all()
+
+
+    def create(self, request):
+        """Handles the creation of a new users
+        Args:
+            request(dict): the request data
+        Return:
+            dict: return the user
+        """
+ 
+        company_exist = Company.objects.filter(id=request.data['company']).first()
+        if not company_exist:
+            error = {
+                'status': 'error',
+                'message': 'invalid company'
+            }
+            return Response(error, status=status.HTTP_403_FORBIDDEN)
+        print(company_exist.added_by_id)
+        print(request.user.id)
+
+        if company_exist.added_by_id != request.user.id:
+            error = {
+                'status': 'error',
+                'message': 'you do not have permission'
+            }
+            return Response(error, status=status.HTTP_400_BAD_REQUEST)
+        print(company_exist)
+        for user in request.data['users']:
+            user['added_by'] = request.user.id
+            user['company'] = request.data['company']
+
+        serializer = CompanyUserSerializer(data=request.data['users'], many=True)
+        if serializer.is_valid():
+            serializer.save()
+            data = {
+                'status': 'success',
+                'data': serializer.data
+            }
+            return Response(data, status=status.HTTP_201_CREATED)
+        error = {
+            'status': 'error',
+            'message': serializer.errors
+        }
+        return Response(error, status=status.HTTP_400_BAD_REQUEST)
+
+    # def create(self, request):
+    #     print(request.data)
+
+
+    # def retrieve(self, request, pk):
+    #     pass
+
+
+    # def list(self, request, pk):
+    #     pass
+
+    # def destroy(self, request, pk):
+    #     pass
