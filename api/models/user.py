@@ -40,7 +40,28 @@ class UserManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
-class User(BaseModel,AbstractBaseUser, PermissionsMixin):
+class CompanyUserManager(BaseUserManager):
+    use_in_migrations = True
+
+    def _create_user(self, email, password, **extra_fields):
+        """
+        Creates and saves a User with the given email and password.
+        """
+        if not email:
+            raise ValueError('Email must be set')
+        if not password:
+            raise ValueError('Password must be set')
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, email, password=None, **extra_fields):
+        return self._create_user(email, password, **extra_fields)
+
+
+class User(BaseModel, AbstractBaseUser, PermissionsMixin):
     """ Model that hold the user data """
 
     ROLES = (
@@ -62,6 +83,47 @@ class User(BaseModel,AbstractBaseUser, PermissionsMixin):
 
 
     objects = UserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
+    def __str__(self):
+        return self.email
+
+    def get_full_name(self):
+        '''
+        Returns the first_name plus the last_name, with a space in between.
+        '''
+        full_name = '%s %s' % (self.first_name, self.last_name)
+        return full_name.strip()
+
+    def get_short_name(self):
+        '''
+        Returns the short name for the user.
+        '''
+        return self.first_name
+
+    def email_user(self, subject, message, from_email=None, **kwargs):
+        '''
+        Sends an email to this User.
+        '''
+        send_mail(subject, message, from_email, [self.email], **kwargs)
+
+
+class CompanyUser(BaseModel):
+    """ Model that holds the different companies user data """
+
+    first_name = models.CharField(max_length=40, null=True, blank=True)
+    last_name = models.CharField(max_length=40, null=True, blank=True)
+    password = models.CharField(max_length=250, null=True, blank=True)
+    email = models.EmailField(max_length=100) 
+    phone = models.CharField(max_length=14, validators=[MinLengthValidator(6)], blank=True, null=True)
+    image_url = models.TextField(null=True, blank=True)
+    added_by = models.ForeignKey('api.User', null=True, on_delete=models.SET_NULL)
+    company = models.ForeignKey('api.Company', on_delete=models.CASCADE)
+    is_verified = models.BooleanField(default=False)
+
+    objects = CompanyUserManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

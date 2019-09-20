@@ -1,1 +1,1 @@
-from .users import UserSerializer, UpdateUserSerializer
+from .users import UserSerializer, UpdateUserSerializer, CompanyUserSerializer

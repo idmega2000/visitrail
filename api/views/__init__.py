@@ -1,1 +1,1 @@
-from .users import UserViewSet, SignUpView
+from .users import UserViewSet, SignUpView, CompanyUserView

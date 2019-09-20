@@ -24,6 +24,7 @@ from api.helpers.token import AuthTokenObtainPairView
 router = routers.DefaultRouter(trailing_slash=False)
 router.register('user', views.UserViewSet)
 router.register('signup', views.SignUpView)
+router.register('companyuser', views.CompanyUserView)
 
 urlpatterns = [
     path('admin', admin.site.urls),
