@@ -40,6 +40,27 @@ class UserManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
+class CompanyUserManager(BaseUserManager):
+    use_in_migrations = True
+
+    def _create_user(self, email, password, **extra_fields):
+        """
+        Creates and saves a User with the given email and password.
+        """
+        if not email:
+            raise ValueError('Email must be set')
+        if not password:
+            raise ValueError('Password must be set')
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, email, password=None, **extra_fields):
+        return self._create_user(email, password, **extra_fields)
+
+
 class User(BaseModel, AbstractBaseUser, PermissionsMixin):
     """ Model that hold the user data """
 
@@ -102,6 +123,10 @@ class CompanyUser(BaseModel):
     company = models.ForeignKey('api.Company', on_delete=models.CASCADE)
     is_verified = models.BooleanField(default=False)
 
+    objects = CompanyUserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
 
     def __str__(self):
         return self.email
